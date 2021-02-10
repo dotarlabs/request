@@ -1,0 +1,17 @@
+{   
+    "name": "dotarlabs/request",
+    "description": "Another basic and simple HTTP client",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Facu Alba",
+            "email": "facu.n.alba@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.3"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
