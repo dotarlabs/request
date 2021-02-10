@@ -30,7 +30,7 @@ class Request
         
         $response = self::init($params);
 
-        $json = json_decode($response, true);
+        $json = json_decode(self::remove_utf8_bom($response), true);
         return $json;
     }
     
@@ -61,7 +61,7 @@ class Request
 
         $response = self::init($params);
 
-        $json = json_decode($response, true);
+        $json = json_decode(self::remove_utf8_bom($response), true);
         return $json;
     }
 
@@ -91,5 +91,11 @@ class Request
         } else {
             return $response;
         }
+    }
+
+    private static function remove_utf8_bom($text) {
+        $bom  = pack('H*','EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+        return $text;
     }
 }
