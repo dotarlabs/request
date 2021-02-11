@@ -1,5 +1,7 @@
 <?php
 
+namespace Dotar;
+
 class Request
 {
         
