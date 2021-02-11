@@ -15,18 +15,18 @@ class Request
      */
     public static function get($url, $config = [], $headers = []) : array
     {
-    
-        if (count($config) > 0) {
-            foreach($config as $key => $value) {
-                $params[$key] = $value;
-            }
-        }
 
         $params = [
             CURLOPT_URL => $url,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => $headers
         ];
+
+        if (count($config) > 0) {
+            foreach($config as $key => $value) {
+                $params[$key] = $value;
+            }
+        }
         
         $response = self::init($params);
 
@@ -45,12 +45,6 @@ class Request
      */
     public static function post($url, $pData, $config = [], $headers = []) : array
     {
-        
- 		if (count($config) > 0) {
-			foreach($config as $key => $value) {
-				$params[$key] = $value;
-			}
-        }
 
         $params = [
             CURLOPT_URL => $url,
@@ -58,6 +52,12 @@ class Request
             CURLOPT_POSTFIELDS => json_encode($pData),
             CURLOPT_HTTPHEADER => $headers
         ];
+        
+ 		if (count($config) > 0) {
+			foreach($config as $key => $value) {
+				$params[$key] = $value;
+			}
+        }
 
         $response = self::init($params);
 
@@ -71,7 +71,7 @@ class Request
         $ch = curl_init();
         $cParams = count($params);
 
-        $params[CURLOPT_RETURNTRANSFER] = 1; // by default is enabled
+        $params[CURLOPT_RETURNTRANSFER] = 1;
 
         if ($cParams > 0) {
             for ($i = 0; $i < $cParams; $i++) { 
