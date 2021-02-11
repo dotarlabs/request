@@ -1,6 +1,6 @@
 <?php
 
-namespace Dotar;
+namespace DotarHttp;
 
 class Request
 {
