@@ -4,7 +4,9 @@ namespace DotarHttp;
 
 class Request
 {
-        
+    
+    static $logger;
+
     /**
      * get Devuelve array de respuesta obtenida por el webservice externo
      *
@@ -30,8 +32,91 @@ class Request
         
         $response = self::init($params);
 
-        $json = json_decode(self::remove_utf8_bom($response), true);
-        return $json;
+        self::$logger = new \Monolog\Logger('DotarHttp\Request\GET');
+        
+        switch ($response['code']) {
+            case 200:
+                $json = json_decode(self::remove_utf8_bom($response['response']), true);
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_200.log", \Monolog\Logger::INFO));
+                self::$logger->info("200", [$json]);
+
+                return $json;
+
+                break;
+            case 201:
+                $json = json_decode($response, true);
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_201.log", \Monolog\Logger::INFO));
+                self::$logger->info("201", [$response]);
+
+                return $response;
+
+                break;
+            case 400:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_400.log", \Monolog\Logger::ERROR));
+                self::$logger->error("400", [$response]);
+
+                break;
+            case 401:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_401.log", \Monolog\Logger::ERROR));
+                self::$logger->error("401", [$response]);
+
+                break;
+            case 402:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_402.log", \Monolog\Logger::ERROR));
+                self::$logger->error("402", [$response]);
+
+                break;
+            case 403:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_403.log", \Monolog\Logger::ERROR));
+                self::$logger->error("403", [$response]);
+
+                break;
+            case 404:
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_404.log", \Monolog\Logger::ERROR));
+                self::$logger->error("404", [$response]);
+
+                break;
+            case 500:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_500.log", \Monolog\Logger::ERROR));
+                self::$logger->error("500", [$response]);
+
+                break;
+            case 501:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_501.log", \Monolog\Logger::ERROR));
+                self::$logger->error("501", [$response]);
+
+                break;
+            case 502:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_502.log", \Monolog\Logger::ERROR));
+                self::$logger->error("502", [$response]);
+
+                break;
+            case 503:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_503.log", \Monolog\Logger::ERROR));
+                self::$logger->error("503", [$response]);
+
+                break;
+            case 504:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/request_504.log", \Monolog\Logger::ERROR));
+                self::$logger->error("504", [$response]);
+
+                break;
+            default:
+                echo "cURL error #:\t" . curl_error($ch) . "\n" . "Unexpected HTTP Code #:\t" . $http_code . " \n";
+                exit(1);
+        }
     }
     
     /**
@@ -43,13 +128,13 @@ class Request
      * @param  mixed $headers por default es vacio
      * @return array
      */
-    public static function post($url, $pData, $config = [], $headers = []) : array
+    public static function post($url, $pData, $config = [], $headers = [], $isBody = false) : array
     {
 
         $params = [
             CURLOPT_URL => $url,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($pData),
+            CURLOPT_POSTFIELDS => !$isBody ? http_build_query($pData) : json_encode($pData),
             CURLOPT_HTTPHEADER => $headers
         ];
         
@@ -61,8 +146,95 @@ class Request
 
         $response = self::init($params);
 
-        $json = json_decode(self::remove_utf8_bom($response), true);
-        return $json;
+        self::$logger = new \Monolog\Logger('DotarHttp\Request\POST');
+        
+        switch ($response['code']) {
+            case 200:
+                $json = json_decode(self::remove_utf8_bom($response['response']), true);
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_200.log", \Monolog\Logger::INFO));
+                self::$logger->info("200", [$json]);
+
+                return $json;
+
+                break;
+            case 201:
+                $json = json_decode(self::remove_utf8_bom($response['response']), true);
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_201.log", \Monolog\Logger::INFO));
+                self::$logger->info("201", [$json]);
+
+                return $json;
+
+                break;
+            case 400:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_400.log", \Monolog\Logger::ERROR));
+                self::$logger->error("400", [$response]);
+
+                break;
+            case 401:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_401.log", \Monolog\Logger::ERROR));
+                self::$logger->error("401", [$response]);
+
+                break;
+            case 402:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_402.log", \Monolog\Logger::ERROR));
+                self::$logger->error("402", [$response]);
+
+                break;
+            case 403:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_403.log", \Monolog\Logger::ERROR));
+                self::$logger->error("403", [$response]);
+
+                break;
+            case 404:
+
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_404.log", \Monolog\Logger::ERROR));
+                self::$logger->error("404", [$response]);
+
+                break;
+            case 500:
+                
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_500.log", \Monolog\Logger::ERROR));
+                self::$logger->error("500", [$response]);
+
+                break;
+
+            case 501:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_501.log", \Monolog\Logger::ERROR));
+                self::$logger->error("501", [$response]);
+
+                break;
+
+            case 502:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_502.log", \Monolog\Logger::ERROR));
+                self::$logger->error("502", [$response]);
+
+                break;
+
+            case 503:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_503.log", \Monolog\Logger::ERROR));
+                self::$logger->error("503", [$response]);
+
+                break;
+
+            case 504:
+            
+                self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/post/request_504.log", \Monolog\Logger::ERROR));
+                self::$logger->error("504", [$response]);
+
+                break;
+            default:
+                echo "cURL error #:\t" . curl_error($ch) . "\n" . "Unexpected HTTP Code #:\t" . $http_code . " \n";
+                exit(1);
+        }
     }
 
     private static function init(array $params)
@@ -84,13 +256,16 @@ class Request
         $response = curl_exec($ch);
         $err = curl_error($ch);
         
-		curl_close($ch);
-
         if ($err) {
             trigger_error("cURL Error #: {$err}");
         } else {
-            return $response;
+            return [
+                "code"     => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                "response" => $response,   
+            ];
         }
+
+        curl_close($ch);
     }
 
     private static function remove_utf8_bom($text) {
