@@ -15,7 +15,7 @@ class Request
      * @param  mixed $headers por default es vacio
      * @return array
      */
-    public static function get($url, $config = [], $headers = []) : array
+    public static function get($url, $config = [], $headers = [], $isXml = false) : array
     {
 
         $params = [
@@ -36,21 +36,29 @@ class Request
         
         switch ($response['code']) {
             case 200:
-                $json = json_decode(self::remove_utf8_bom($response['response']), true);
-
+                
                 self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_200.log", \Monolog\Logger::INFO));
-                self::$logger->info("200", [$json]);
 
-                return $json;
+                if (!$isXml) {
+                    self::$logger->info("200", [$response]);
+                    return json_decode(self::remove_utf8_bom($response['response']), true);
+                } else {
+                    self::$logger->info("200", [$response]);
+                    return (array) simplexml_load_string($response['response']);
+                }
 
                 break;
             case 201:
-                $json = json_decode($response, true);
 
                 self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_201.log", \Monolog\Logger::INFO));
-                self::$logger->info("201", [$response]);
 
-                return $response;
+                if (!$isXml) {
+                    self::$logger->info("201", [$response]);
+                    return json_decode(self::remove_utf8_bom($response['response']), true);
+                } else {
+                    self::$logger->info("201", [$response]);
+                    return (array) simplexml_load_string($response['response']);
+                }
 
                 break;
             case 400:
