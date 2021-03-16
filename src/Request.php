@@ -15,7 +15,7 @@ class Request
      * @param  mixed $headers por default es vacio
      * @return array
      */
-    public static function get($url, $config = [], $headers = [], $isXml = false) : array
+    public static function get($url, $config = [], $headers = [], $isXml = false)
     {
 
         $params = [
@@ -44,7 +44,7 @@ class Request
                     return json_decode(self::remove_utf8_bom($response['response']), true);
                 } else {
                     self::$logger->info("200", [$response]);
-                    return (array) simplexml_load_string($response['response']);
+                    return simplexml_load_string($response['response']);
                 }
 
                 break;
@@ -57,7 +57,7 @@ class Request
                     return json_decode(self::remove_utf8_bom($response['response']), true);
                 } else {
                     self::$logger->info("201", [$response]);
-                    return (array) simplexml_load_string($response['response']);
+                    return simplexml_load_string($response['response']);
                 }
 
                 break;
