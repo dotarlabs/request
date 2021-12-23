@@ -262,14 +262,18 @@ class Request
         }
         
         $response = curl_exec($ch);
-        $err = curl_error($ch);
         
-        if ($err) {
-            trigger_error("cURL Error #: {$err}");
+        if (!curl_errno($ch)) {
+            return [
+                'error'    => false,
+                'code'     => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                'response' => $response,   
+            ];
         } else {
             return [
-                "code"     => curl_getinfo($ch, CURLINFO_HTTP_CODE),
-                "response" => $response,   
+                'error'   => true,
+                'code'    => curl_errno($ch),
+                'message' => curl_error($ch)
             ];
         }
 
