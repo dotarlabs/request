@@ -35,6 +35,9 @@ class Request
         self::$logger = new \Monolog\Logger('DotarHttp\Request\GET');
         
         switch ($response['code']) {
+            case 28:
+                return $response;
+                break;
             case 200:
                 
                 self::$logger->pushHandler(new \Monolog\Handler\StreamHandler("./log/request/get/request_200.log", \Monolog\Logger::INFO));
@@ -157,6 +160,9 @@ class Request
         self::$logger = new \Monolog\Logger('DotarHttp\Request\POST');
         
         switch ($response['code']) {
+            case 28:
+                return $response;
+                break;
             case 200:
                 $json = json_decode(self::remove_utf8_bom($response['response']), true);
 
